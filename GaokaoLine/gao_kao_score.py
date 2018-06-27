@@ -1,3 +1,4 @@
+#-coding:utf-8
 from multiprocessing.pool import Pool
 
 import requests
@@ -5,7 +6,7 @@ from bs4 import BeautifulSoup
 import pymongo
 import re
                                                     #安装这个pymongo后，调用这个方法，
-client = pymongo.MongoClient('10.83.36.87', 27017)  #输入数据库所在的ip，端口，这里不用实现创建数据库
+client = pymongo.MongoClient('192.168.56.11', 27017)  #输入数据库所在的ip，端口，这里不用实现创建数据库
 gaokao = client['gaokao']                           #这里相当于创建了gaokao这个数据库
 provice_href = gaokao['provice_href']               #创建这个provice_href的表赋变量给他
 score_detail = gaokao['score_detail']
@@ -31,7 +32,7 @@ def get_provice(url):
             'provice': provice
         }
         # provice_in_mongodb = provice_href.find({"provice": provice})
-        provice_in_mongodb = provice_href.find("$and:[{'provice': provice},{'href':href}]")
+        provice_in_mongodb = provice_href.find({"$and":[{'provice': provice},{'href':href}]})
 
         if provice_in_mongodb.count():  # 判断查找这个条件的出来的数据是否为空，注意这里是用.count()
             print('已存在，更新url')
@@ -105,5 +106,5 @@ if __name__ == '__main__':
         'Connection': 'keep - alive'}
     url = 'http://www.gaokao.com/guangdong/fsx/'
     get_provice(url)
-    pool = Pool()
-    pool.map(get_score, [i for i in pro_link])#使用多线程
+    # pool = Pool()
+    # pool.map(get_score, [i for i in pro_link])#使用多线程
